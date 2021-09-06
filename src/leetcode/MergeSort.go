@@ -1,11 +1,5 @@
 package main
 
-func sortArray(num []int) []int {
-	mergeSort(num, 0, len(num)-1)
-	return num
-}
-
-// 从小到大
 func mergeSort(nums []int, low, high int) {
 	if low == high {
 		return
@@ -45,5 +39,52 @@ func merge(nums []int, mid, low, high int) {
 	}
 	for i, v := range num {
 		nums[low+i] = v
+	}
+}
+
+func sortArray(num []int) []int {
+	aux := make([]int, len(num))
+	mergeTopDownSort(num, aux, 0, len(num)-1)
+	//mergeSort(num, 0, len(num)-1)
+	return num
+}
+
+// aux 辅助数组
+func mergeTopDownSort(nums []int, aux []int, low, high int) {
+	if low >= high {
+		return
+	}
+	mid := low + (high-low)/2
+	mergeTopDownSort(nums, aux, low, mid)
+	mergeTopDownSort(nums, aux, mid+1, high)
+	mergeTopDown(nums, aux, low, mid, high)
+}
+
+func mergeTopDown(nums []int, aux []int, low, mid, high int) {
+	// copy data to nums
+	for i := low; i <= high; i++ {
+		aux[i] = nums[i]
+	}
+
+	lowIndex := low
+	highIndex := mid + 1
+	for i := low; i <= high; i++ {
+		if lowIndex > mid {
+			//  左边获取完毕
+			nums[i] = aux[highIndex]
+			highIndex = highIndex + 1
+		} else if highIndex > high {
+			// 右边获取完毕
+			nums[i] = aux[lowIndex]
+			lowIndex = lowIndex + 1
+		} else if aux[lowIndex] < aux[highIndex] {
+			// 都没获取完毕，并且左边小于右边
+			nums[i] = aux[lowIndex]
+			lowIndex = lowIndex + 1
+		} else {
+			// 都没获取完毕，并且右边小于左边
+			nums[i] = aux[highIndex]
+			highIndex = highIndex + 1
+		}
 	}
 }
