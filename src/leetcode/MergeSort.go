@@ -88,3 +88,22 @@ func mergeTopDown(nums []int, aux []int, low, mid, high int) {
 		}
 	}
 }
+
+// 自底而上处理
+func mergeDownTopSort(num []int) {
+	length := len(num)
+	aux := make([]int, length)
+	for sz := 1; sz < length; sz = sz + sz { //sz 子数组大小
+		//  因为每次合并的都是2sz,所以下次处理的位置是2sz
+		// 1 2 4 8 16
+		for low := 0; low < length-sz; low += sz + sz { //子数组索引
+			high := low
+			if low+sz+sz-1 > length-1 {
+				high = length - 1
+			} else {
+				high = low + sz + sz - 1
+			}
+			mergeTopDown(num, aux, low, low+sz-1, high)
+		}
+	}
+}
