@@ -270,19 +270,22 @@ func findMaxWithLoop(head *BinaryTree) *BinaryTree {
 }
 
 func main() {
-	tree := insert(nil, 3, 3)
-	insert(tree, 2, 2)
-	insert(tree, 4, 4)
-	insert(tree, 1, 1)
-	insert(tree, 5, 5)
+	tree := insert(nil, 10, 10)
+	insert(tree, 38, 38)
+	insert(tree, 26, 26)
+	insert(tree, 72, 72)
+	insert(tree, 55, 55)
+	insert(tree, 90, 90)
+	insert(tree, 41, 41)
+	insert(tree, 43, 43)
+	insert(tree, 60, 60)
+	insert(tree, 78, 78)
+	insert(tree, 92, 92)
+	insert(tree, 74, 74)
 	fmt.Println("--------")
-	postOrder(tree)
+	deleteKey(tree,38)
 	fmt.Println("--------")
-	postOrderWithLoop(tree)
-	fmt.Println("--------")
-	postOrderWithLoopOneStack(tree)
-	fmt.Println("--------")
-	//postOrder(tree)
+	fmt.Println(tree)
 	//fmt.Println("--------")
 	//loop := findMin(tree)
 	//fmt.Println(loop)
@@ -337,5 +340,145 @@ func (s *Stack) peek() *BinaryTree {
 func (s *Stack) Show() {
 	for _, element := range s.e {
 		fmt.Println(element)
+	}
+}
+
+func deleteKeyWithLoop(head *BinaryTree, key int) bool {
+	current := head
+	parent := head
+	isLeftChild := true
+	// 这里是查找key
+	for key != current.key {
+		parent = current
+		if current.key > key {
+			isLeftChild = true
+			current = current.leftNode
+		} else {
+			isLeftChild = false
+			current = current.rightNode
+		}
+		if current == nil {
+			return false
+		}
+	}
+	// 当前只删除了叶子节点
+	if current.leftNode == nil && current.rightNode == nil {
+		if current == head {
+			head = nil
+		} else if isLeftChild {
+			parent.leftNode = nil
+		} else {
+			parent.rightNode = nil
+		}
+	} else if current.rightNode == nil {
+		if current == head {
+			head = current.leftNode
+		} else if isLeftChild {
+			parent.leftNode = current.leftNode
+		} else {
+			parent.rightNode = current.leftNode
+		}
+	} else if current.leftNode == nil {
+		if current == head {
+			head = current.rightNode
+		} else if isLeftChild {
+			parent.leftNode = current.rightNode
+		} else {
+			parent.rightNode = current.rightNode
+		}
+	} else {
+		successor := findSuccessor(current)
+		// 删除的是根节点
+		if current == head {
+			head = successor
+		} else if isLeftChild {
+			parent.leftNode = successor
+		} else {
+			// 删除节点的父亲的右节点设置为后继
+			parent.rightNode = successor
+		}
+		// 后继节点的左子树为删除节点的左子树
+		successor.leftNode = current.leftNode
+	}
+	return true
+}
+
+func findSuccessor(head *BinaryTree) *BinaryTree {
+	// 开始是后继节点父亲为要删除节点
+	successorParent := head
+	// 开始是后继节点为要删除节点
+	successor := head
+	//  拿到右节点
+	current := head.rightNode
+	// 这里要往左边走。如果左边不为空，一直走
+	for current != nil {
+		// 每向下一步，每次保存父亲节点
+		successorParent = successor
+		// 后继节点为当前节点
+		successor = current
+		// 继续向左走，这里可能为空，为空的话，successor = current，这里已经把 current设置成后继
+		current = current.leftNode
+	}
+	// 因为后继节点已经没有左子树了
+	if successor != head.rightNode {
+		// 让后继节点的父亲的的左孩子等于右继续节点的左孩子
+		successorParent.leftNode = successor.rightNode
+		//  把要删除的节点的右边给后继节点
+		successor.rightNode = head.rightNode
+	}
+	return successor
+}
+
+func deleteKey(head *BinaryTree, key int) *BinaryTree {
+	// 没有找到
+	if head == nil {
+		return nil
+	}
+	if head.key > key {
+		head.leftNode = deleteKey(head.leftNode, key)
+	} else if head.key < key {
+		head.rightNode = deleteKey(head.rightNode, key)
+	} else {
+		//  删除节点没有孩子,让其父亲删除该节点
+		if head.leftNode == nil && head.rightNode == nil {
+			return nil
+		} else if head.leftNode == nil {
+			return head.rightNode
+		} else if head.rightNode == nil {
+			return head.leftNode
+		} else {
+			// 从当前节点的左边开始找
+			successorWrap := getSuccessor(newBinaryTreeWrap(head.rightNode, head))
+			if successorWrap.successor != head.rightNode {
+				successorWrap.successorParent.leftNode = successorWrap.successor.rightNode
+				successorWrap.successor.rightNode = head.rightNode
+			}
+			// 后继节点为左节点为要删除的节点
+			successorWrap.successor.leftNode = head.leftNode
+			head = successorWrap.successor
+		}
+	}
+	// 这里返回的节点让其父亲进行连接
+	return head
+}
+
+func getSuccessor(head *BinaryTreeWrap) *BinaryTreeWrap {
+	if head.successor.leftNode != nil {
+		return getSuccessor(newBinaryTreeWrap(head.successor.leftNode, head.successor))
+	} else {
+		return head
+	}
+}
+
+type BinaryTreeWrap struct {
+	// 后继续节点
+	successor       *BinaryTree
+	successorParent *BinaryTree
+}
+
+func newBinaryTreeWrap(successor, successorParent *BinaryTree) *BinaryTreeWrap {
+	return &BinaryTreeWrap{
+		successor:       successor,
+		successorParent: successorParent,
 	}
 }
