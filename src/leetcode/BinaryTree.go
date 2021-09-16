@@ -206,20 +206,23 @@ func postOrderWithLoopOneStack(head *BinaryTree) {
 	// 头推入
 	stack.Push(head)
 	// 当前节点
-	parent := head
+	current := head
 	for !stack.IsEmpty() {
 		// 拿到了根节点但是当前先不推出
 		peekNode := stack.peek()
-		if peekNode.leftNode != nil && peekNode.leftNode != parent && peekNode.rightNode != parent {
+		//  这里判断左节点不为空的时候才处理
+		//  为什么这里peekNode.leftNode != current，因为可能上一次推出的是左孩子节点，这里刚回到父亲在推入不出问题了吗
+		//  为什么peekNode.rightNode != current，因为这里推完左孩子，已经处理右孩子，而且处理完右孩子，所以当前等于右孩子，如果不判断的话就重复推入左孩子了
+		if peekNode.leftNode != nil && peekNode.leftNode != current && peekNode.rightNode != current {
 			// 推入左孩子节点
 			stack.Push(peekNode.leftNode)
-		} else if peekNode.rightNode != nil && peekNode.rightNode != parent {
+		} else if peekNode.rightNode != nil && peekNode.rightNode != current {
 			// 推入右孩子节点
 			stack.Push(peekNode.rightNode)
 		} else {
 			pop := stack.Pop()
 			fmt.Printf("key:%d,value:%d\n", pop.key, pop.value)
-			parent = peekNode
+			current = peekNode
 		}
 	}
 }
