@@ -275,17 +275,18 @@ func main() {
 	insert(tree, 26, 26)
 	insert(tree, 72, 72)
 	insert(tree, 55, 55)
-	insert(tree, 90, 90)
-	insert(tree, 41, 41)
-	insert(tree, 43, 43)
-	insert(tree, 60, 60)
-	insert(tree, 78, 78)
-	insert(tree, 92, 92)
-	insert(tree, 74, 74)
-	fmt.Println("--------")
-	deleteKey(tree,38)
-	fmt.Println("--------")
-	fmt.Println(tree)
+	//insert(tree, 90, 90)
+	//insert(tree, 41, 41)
+	//insert(tree, 43, 43)
+	//insert(tree, 60, 60)
+	//insert(tree, 78, 78)
+	//insert(tree, 92, 92)
+	//insert(tree, 74, 74)
+	//fmt.Println("--------")
+	//deleteKey(tree, 38)
+	//fmt.Println("--------")
+	//fmt.Println(tree)
+	fmt.Println(binaryTreeSize(tree))
 	//fmt.Println("--------")
 	//loop := findMin(tree)
 	//fmt.Println(loop)
@@ -482,3 +483,139 @@ func newBinaryTreeWrap(successor, successorParent *BinaryTree) *BinaryTreeWrap {
 		successorParent: successorParent,
 	}
 }
+
+func binaryTreeSize(tree *BinaryTree) int {
+	// 如果子树为空返回0
+	if tree == nil {
+		return 0
+	}
+	// 递归计算左子树
+	lSize := binaryTreeSize(tree.leftNode)
+	// 递归计算右子树
+	rSize := binaryTreeSize(tree.rightNode)
+	// 加上当前节点
+	return rSize + lSize + 1
+}
+
+func deleteKeyFour(head *BinaryTree, key int) *BinaryTree {
+	// 没找到元素，不进行处理
+	if nil == head {
+		return nil
+	}
+	if head.key < key {
+		// 如果要删除根节点的右节点，继续在右子树上查找
+		head.rightNode = deleteKeyFour(head.rightNode, key)
+	} else if head.key > key {
+		// 如果要删除根节点的左节点，继续在左子树上查找
+		head.leftNode = deleteKeyFour(head.leftNode, key)
+	} else {
+		// 要删除节点
+		// 两个都为空
+		if head.leftNode == nil && head.rightNode == nil {
+			return nil
+		}
+		// 如果左节点为空，返回右节点
+		if head.leftNode == nil {
+			return head.rightNode
+		}
+		// 如果右节点为空，返回左节点
+		if head.rightNode == nil {
+			return head.leftNode
+		}
+		// 先查找到后继节点，也就是当前子树的右子树的最小节点
+		successor := findMin(head.rightNode)
+		// 因为后继节点可能是右子树的根节点，所以这时候的右节点就编程了原来的head.rightNode.rightNode
+		// 1.如果后继节点为删除节点的右子节点，这时候successor.rightNode = head.rightNode.rightNode
+		// 2.如果后继节点是删除节点的右子左孙节点，这时候，递归会把后继节点的右孩子连接到后继节点父亲的左子树上，这时候successor.rightNode = head.rightNode
+		successor.rightNode = deleteMin(head.rightNode)
+		// 后继续节点的左节点是删除节点的左节点
+		successor.leftNode = head.leftNode
+	}
+	return head
+}
+
+func deleteMin(b *BinaryTree) *BinaryTree {
+	// 因为左边没节点了，当前节点就是最小节点
+	if nil == b.leftNode {
+		return b.rightNode
+	}
+	// 还有小节点继续处理
+	b.leftNode = deleteMin(b.leftNode)
+	return b
+}
+
+func floor(b *BinaryTree, key int) *BinaryTree {
+	// 如果找不到当前节点，直接返回空
+	if b == nil {
+		return nil
+	}
+	// 如果在左子树一定在
+	if key < b.key {
+		return floor(b.leftNode, key)
+	}
+	// 查询右子树
+	if b.key < key {
+		tree := floor(b.rightNode, key)
+		if nil == tree {
+			// 返回为空的话就说明右节点没有小于等于key的节点
+			return b
+		} else {
+			return tree
+		}
+	}
+	return b
+}
+
+func ceiling(b *BinaryTree, key int) *BinaryTree {
+	// 子树为空，返回空
+	if b == nil {
+		return nil
+	}
+	//  key与子树的根节点相同
+	if b.key == key {
+		return b
+	}
+	// 如果在右子树上，一定存在
+	if b.key < key {
+		return ceiling(b.rightNode, key)
+	}
+	// 左子树不一定存在，因为没有大于等于key的节点的话，根节点就是结果
+	r := ceiling(b.leftNode, key)
+	if nil != r {
+		return r
+	}
+	return b
+}
+
+func selection(b *BinaryTree, k int) *BinaryTree {
+	size := binaryTreeSize(b.leftNode)
+	if size > k {
+		// 如果在左边，一直向左边缩小，每次数量会减少一半
+		return selection(b.leftNode, k)
+	} else if size < k {
+		// 从右子树的左子树
+		return selection(b.rightNode, k-size-1)
+	} else {
+		// 如果正好相等，则这个就是结果
+		return b
+	}
+}
+
+func rank(b *BinaryTree, key int) int {
+	// 如果为空，返回0
+	if b == nil {
+		return 0
+	}
+	// 如果这个key相等，返回左子树数量
+	if b.key == key {
+		return binaryTreeSize(b.leftNode)
+	} else if b.key > key {
+		// 如果key小于子树的根，继续左子树查找
+		return rank(b.leftNode, key)
+	} else {
+		// 如果在右子树，先加上所有左子树数量+根节点
+		// 从右树上继续找左节点数量
+		return 1 + binaryTreeSize(b.leftNode) + rank(b.rightNode, key)
+	}
+}
+
