@@ -207,7 +207,7 @@ func (t *Tree234) spilt(node *TreeNode) {
 	itemB := node.removeDataItem()
 	child2 := node.disConnectionChild(2)
 	child3 := node.disConnectionChild(3)
-	newNode := newTreeNode()
+	newRight := newTreeNode()
 	parent := node
 	if node == t.root {
 		t.root = newTreeNode()
@@ -222,10 +222,10 @@ func (t *Tree234) spilt(node *TreeNode) {
 		temp := parent.disConnectionChild(j)
 		parent.connectionChild(j+1, temp)
 	}
-	parent.connectionChild(itemIndex+1, newNode)
-	newNode.insertDataItem(itemC)
-	newNode.connectionChild(0, child2)
-	newNode.connectionChild(1, child3)
+	parent.connectionChild(itemIndex+1, newRight)
+	newRight.insertDataItem(itemC)
+	newRight.connectionChild(0, child2)
+	newRight.connectionChild(1, child3)
 }
 
 func newTreeNode() *TreeNode {
