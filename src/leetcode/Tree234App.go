@@ -18,8 +18,8 @@ func (i *DataItem) display() {
 type TreeNode struct {
 	numItems   int
 	parent     *TreeNode
-	childArray []*TreeNode
-	dataItems  []*DataItem
+	childArray [order]*TreeNode
+	dataItems  [order - 1]*DataItem
 }
 
 // 连接一个子节点
@@ -229,5 +229,17 @@ func (t *Tree234) spilt(node *TreeNode) {
 }
 
 func newTreeNode() *TreeNode {
-	return &TreeNode{}
+	return &TreeNode{numItems: 0, parent: nil}
+}
+
+func main() {
+	tree234 := Tree234{
+		root: newTreeNode(),
+	}
+
+	tree234.insert(50)
+	tree234.insert(40)
+	tree234.insert(60)
+	tree234.insert(30)
+	tree234.insert(70)
 }
