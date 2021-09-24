@@ -203,27 +203,40 @@ func (t Tree234) insert(key int) {
 
 func (t *Tree234) spilt(node *TreeNode) {
 	itemIndex := 0
+	// 拿到最右边的数据
 	itemC := node.removeDataItem()
+	// 中间节点数据
 	itemB := node.removeDataItem()
+	// 右边数据的两个链接，这两个连接需要放到新node上
 	child2 := node.disConnectionChild(2)
 	child3 := node.disConnectionChild(3)
+	// 创建新的节点
 	newRight := newTreeNode()
 	parent := node
 	if node == t.root {
+		// 创建新root
 		t.root = newTreeNode()
 		parent = t.root
+		// 当前节点放到最左节点上，根节点与普通节点区别就是root设置和需要将当前节点放到最左边
 		t.root.connectionChild(0, node)
 	} else {
 		parent = node.getParent()
 	}
+	// 中间数据上浮上去，这里itemIndex可能等于1或者2
 	itemIndex = parent.insertDataItem(itemB)
+	// 总元素数量
 	items := parent.getNumItems()
+	// 如果新插入的元素插入到了中间位置
 	for j := items - 1; j > itemIndex; j-- {
+		// 后面位置链接的数据需要向后移动
 		temp := parent.disConnectionChild(j)
 		parent.connectionChild(j+1, temp)
 	}
+	// 新节点，在其父亲的itemIndex+1处
 	parent.connectionChild(itemIndex+1, newRight)
+	// 新节点增加数据
 	newRight.insertDataItem(itemC)
+	// 连接数据
 	newRight.connectionChild(0, child2)
 	newRight.connectionChild(1, child3)
 }
