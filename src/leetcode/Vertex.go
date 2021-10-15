@@ -157,3 +157,25 @@ func (g *Graph) bfs() {
 		itemValue.wasVisited = false
 	}
 }
+
+func (g *Graph) mst() {
+	stackX := newStackX()
+	g.vertexList[0].wasVisited = true
+	stackX.push(0)
+	for !stackX.isEmpty() {
+		// 能找到其他连接，继续向下走
+		from := stackX.peek()
+		to := g.getAdjUnvisitedVertex(from)
+		if to == -1 {
+			stackX.pop()
+		} else {
+			g.vertexList[to].wasVisited = true
+			stackX.push(to)
+			g.displayVertex(from)
+			g.displayVertex(to)
+		}
+	}
+	for _, itemValue := range g.vertexList {
+		itemValue.wasVisited = false
+	}
+}
