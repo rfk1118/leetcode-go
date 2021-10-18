@@ -179,3 +179,67 @@ func (g *Graph) mst() {
 		itemValue.wasVisited = false
 	}
 }
+
+func (g *Graph) topo() {
+	var st [MaxVertex]rune
+	vertex := g.nVertex
+	for vertex > 0 {
+		currentNode := g.noSuccessors()
+		if currentNode == vertex-1 {
+			fmt.Println("error graph have cycles")
+			return
+		}
+		st[g.nVertex-1] = g.vertexList[currentNode].label
+		g.deleteVertex(currentNode)
+	}
+	fmt.Println("sort order")
+	for _, r := range st {
+		fmt.Println(r)
+	}
+}
+
+// 查找后继续节点
+func (g *Graph) noSuccessors() int {
+	var isEdge bool
+	vertex := g.nVertex
+	for row := 0; row < vertex; row++ {
+		isEdge = false
+		for col := 0; col < vertex; col++ {
+			if g.adjMat[row][col] > 0 {
+				isEdge = true
+				break
+			}
+		}
+		if !isEdge {
+			return row
+		}
+	}
+	return -1
+}
+
+func (g *Graph) deleteVertex(delVel int) {
+	if delVel != g.nVertex-1 {
+		for j := delVel; j < g.nVertex-1; j++ {
+			g.vertexList[j] = g.vertexList[j+1]
+		}
+		for row := delVel; row < g.nVertex-1; row++ {
+			g.moveRowUp(row, g.nVertex)
+		}
+		for col := delVel; col < g.nVertex-1; col++ {
+			g.moveColLeft(col, g.nVertex)
+		}
+	}
+	g.nVertex = g.nVertex - 1
+}
+
+func (g *Graph) moveRowUp(row int, length int) {
+	for col := 0; col < length; col++ {
+		g.adjMat[row][col] = g.adjMat[row+1][col]
+	}
+}
+
+func (g *Graph) moveColLeft(col int, length int) {
+	for row := 0; row < length; row++ {
+		g.adjMat[row][col] = g.adjMat[row][col+1]
+	}
+}
