@@ -243,3 +243,35 @@ func (g *Graph) moveColLeft(col int, length int) {
 		g.adjMat[row][col] = g.adjMat[row][col+1]
 	}
 }
+
+func (g *Graph) shortPath() {
+	vertex := g.nVertex
+	var d [MaxVertex][MaxVertex]int
+	var path [MaxVertex][MaxVertex]int
+	for i := 1; i < vertex; i++ {
+		for j := 1; j < vertex; j++ {
+			d[i][j] = g.adjMat[i][j]
+			if d[i][j] != 0 {
+				// 如果i和j之前有连接，则讲j的前驱设置成i
+				path[i][j] = i
+			} else {
+				// 如果i和j之前无连接，设置成-1
+				path[i][j] = -1
+			}
+		}
+	}
+
+	for k := 1; k < vertex; k++ {
+		for i := 1; i < vertex; i++ {
+			for j := 1; j < vertex; j++ {
+				// 从i经过k到j的一条路径更短
+				if d[i][k]+d[k][j] < d[i][j] {
+					// 更新最短路径
+					d[i][j] = d[i][k] + d[k][j]
+					// 更改j的前驱
+					path[i][j] = path[k][j]
+				}
+			}
+		}
+	}
+}
