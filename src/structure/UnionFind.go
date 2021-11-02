@@ -23,7 +23,7 @@ func (uf *UnionFind) find(item int) int {
 	}
 	// 路径压缩
 	root := uf.find(uf.L[item])
-	L[item] = root
+	uf.L[item] = root
 	return root
 }
 
