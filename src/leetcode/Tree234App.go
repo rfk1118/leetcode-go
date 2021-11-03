@@ -15,15 +15,15 @@ func (i *DataItem) display() {
 }
 
 // TreeNode node节点
-type TreeNode struct {
+type TreeNode234 struct {
 	numItems   int
-	parent     *TreeNode
-	childArray [order]*TreeNode
+	parent     *TreeNode234
+	childArray [order]*TreeNode234
 	dataItems  [order - 1]*DataItem
 }
 
 // 连接一个子节点
-func (r *TreeNode) connectionChild(childNum int, child *TreeNode) {
+func (r *TreeNode234) connectionChild(childNum int, child *TreeNode234) {
 	r.childArray[childNum] = child
 	if nil != child {
 		child.parent = r
@@ -31,44 +31,44 @@ func (r *TreeNode) connectionChild(childNum int, child *TreeNode) {
 }
 
 // 删除一个子节点
-func (r *TreeNode) disConnectionChild(childNum int) *TreeNode {
+func (r *TreeNode234) disConnectionChild(childNum int) *TreeNode234 {
 	node := r.childArray[childNum]
 	r.childArray[childNum] = nil
 	return node
 }
 
 // 获取第n个位置的孩子
-func (r *TreeNode) getChild(childNum int) *TreeNode {
+func (r *TreeNode234) getChild(childNum int) *TreeNode234 {
 	return r.childArray[childNum]
 }
 
 // 获取父亲
-func (r *TreeNode) getParent() *TreeNode {
+func (r *TreeNode234) getParent() *TreeNode234 {
 	return r.parent
 }
 
 // 是否为叶子节点
-func (r *TreeNode) isLeaf() bool {
+func (r *TreeNode234) isLeaf() bool {
 	return r.childArray[0] == nil
 }
 
 // 是否满了
-func (r *TreeNode) isFull() bool {
+func (r *TreeNode234) isFull() bool {
 	return r.numItems == (order - 1)
 }
 
 // 获取节点数量
-func (r *TreeNode) getNumItems() int {
+func (r *TreeNode234) getNumItems() int {
 	return r.numItems
 }
 
 // 获取节点数据
-func (r *TreeNode) getDataItem(index int) *DataItem {
+func (r *TreeNode234) getDataItem(index int) *DataItem {
 	return r.dataItems[index]
 }
 
 // 查找元素
-func (r *TreeNode) findItem(key int) int {
+func (r *TreeNode234) findItem(key int) int {
 	for i := 0; i < order-1; i++ {
 		// 如果这里还没有填充跳过
 		if r.dataItems[i] == nil {
@@ -82,7 +82,7 @@ func (r *TreeNode) findItem(key int) int {
 	return -1
 }
 
-func (r *TreeNode) insertDataItem(newItem *DataItem) int {
+func (r *TreeNode234) insertDataItem(newItem *DataItem) int {
 	// 增加一个元素
 	r.numItems++
 	// 元素的key
@@ -112,7 +112,7 @@ func (r *TreeNode) insertDataItem(newItem *DataItem) int {
 }
 
 // 删除最大元素
-func (r *TreeNode) removeDataItem() *DataItem {
+func (r *TreeNode234) removeDataItem() *DataItem {
 	// 查找最大元素
 	item := r.dataItems[r.numItems-1]
 	// 删除引用
@@ -123,7 +123,7 @@ func (r *TreeNode) removeDataItem() *DataItem {
 	return item
 }
 
-func (r *TreeNode) displayNode() {
+func (r *TreeNode234) displayNode() {
 	for j := 0; j < r.numItems; j++ {
 		r.dataItems[j].display()
 		fmt.Println("/")
@@ -131,7 +131,7 @@ func (r *TreeNode) displayNode() {
 }
 
 type Tree234 struct {
-	root *TreeNode
+	root *TreeNode234
 }
 
 func (t Tree234) find(key int) int {
@@ -156,7 +156,7 @@ func (t Tree234) find(key int) int {
 	return childNumber
 }
 
-func (t Tree234) getNextNode(node *TreeNode, key int) *TreeNode {
+func (t Tree234) getNextNode(node *TreeNode234, key int) *TreeNode234 {
 	i := 0
 	// 所有的元素
 	items := node.getNumItems()
@@ -201,7 +201,7 @@ func (t Tree234) insert(key int) {
 	currentNode.insertDataItem(item)
 }
 
-func (t *Tree234) spilt(node *TreeNode) {
+func (t *Tree234) spilt(node *TreeNode234) {
 	itemIndex := 0
 	// 拿到最右边的数据
 	itemC := node.removeDataItem()
@@ -241,8 +241,8 @@ func (t *Tree234) spilt(node *TreeNode) {
 	newRight.connectionChild(1, child3)
 }
 
-func newTreeNode() *TreeNode {
-	return &TreeNode{numItems: 0, parent: nil}
+func newTreeNode() *TreeNode234 {
+	return &TreeNode234{numItems: 0, parent: nil}
 }
 
 func main() {
