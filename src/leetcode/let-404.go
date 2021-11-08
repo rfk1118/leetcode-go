@@ -2,38 +2,54 @@ package main
 
 // 从顶向下找左子树
 func sumOfLeftLeaves(root *TreeNode) int {
-	var all []int
-	sumOfLeftLeavesHelper(root, &all)
-	sum := 0
-	for _, i := range all {
-		sum = sum + i
+	if nil == root {
+		return 0
 	}
-	return sum
+	return bfs(root)
 }
 
-func sumOfLeftLeavesHelper(root *TreeNode, all *[]int) {
-	// 往右走，已经为叶子节点，不在往下走了
-	if root.Left == nil && root.Right == nil {
+// 是否为叶子节点
+func isLeaf(root *TreeNode) bool {
+	return root.Left == nil && root.Right == nil
+}
+
+func bfs(root *TreeNode) (ans int) {
+	if root == nil {
 		return
 	}
-	node := sumOfFindMin(root)
-	if nil != node {
-		*all = append(*all, node.Val)
+	// 切片
+	q := []*TreeNode{root}
+	// 非空
+	for len(q) > 0 {
+		node := q[0]
+		q = q[1:]
+		if node.Left != nil {
+			if isLeaf(node.Left) {
+				ans = ans + node.Left.Val
+			} else {
+				q = append(q, node.Left)
+			}
+			if node.Right != nil && !isLeaf(node.Right) {
+				q = append(q, node.Right)
+			}
+		}
 	}
-	if nil != root.Right {
-		sumOfLeftLeavesHelper(root.Right, all)
-	}
+	return
 }
 
-// 找到所有的叶子节点
-func sumOfFindMin(root *TreeNode) *TreeNode {
-	// 没有叶子节点
-	if root == nil {
-		return nil
+func dfs(root *TreeNode) (ans int) {
+	if root.Left != nil {
+		// 找到了左叶子节点
+		if isLeaf(root.Left) {
+			ans += root.Left.Val
+		} else {
+			// 还没找到，继续递归去找
+			ans += dfs(root.Left)
+		}
 	}
-	// 这里说明是叶子节点
-	if root.Left == nil && root.Right == nil {
-		return root
+	// 处理右节点
+	if root.Right != nil && !isLeaf(root.Right) {
+		ans += dfs(root.Right)
 	}
-	return sumOfFindMin(root.Left)
+	return
 }
